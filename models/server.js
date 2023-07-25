@@ -1,9 +1,11 @@
 import express from 'express'
 import cors from 'cors'
 
-import { router } from '../routes/usuarios.js'
-import { routerAuth } from '../routes/auth.js'
-import { dbConnection } from '../database/config.js'
+import {router} from '../routes/user.js';
+import { dbConnection } from '../database/config.js';
+import { routerAuth} from '../routes/auth.js'
+import fileUpload from 'express-fileupload';
+import { routerBuscar } from '../routes/buscar.js';
 
 export class Server{
 
@@ -48,17 +50,17 @@ export class Server{
         this.app.use( express.static('public') );
 
         // Fileupload - Carga de archivos
-/*        this.app.use( fileUpload({
+        this.app.use( fileUpload({
             useTempFiles : true,
             tempFileDir : '/tmp/',
             createParentPath: true
         }));
-*/
+
     }
 
     routes(){
         this.app.use( this.path.auth,routerAuth);
-        //this.app.use( this.path.buscar,routerBuscar);
+        this.app.use( this.path.buscar,routerBuscar);
         //this.app.use( this.path.categorias,routerCategoria);
         //this.app.use( this.path.productos,routerProducto);
         this.app.use(this.path.usuarios, router);
