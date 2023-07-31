@@ -1,51 +1,40 @@
-import { generarJWT } from "../helpers/generar-jwt.js";
 import bcryptjs from 'bcryptjs';
 
-import { Usuario } from "../models/usuario.js";
+import { generarJWT } from "../helpers/generar-jwt.js";
+import { Usuario } from '../models/usuario.js';
+import { Medico } from '../models/medico.js';
 
-export const login = async(req, res = response) => {
-
+export const login = async (req, res = response) => {
     const { correo, password } = req.body;
 
     try {
+        const usuario = await Usuario.findOne({ correo }) || await Medico.findOne({ correo });
 
-        // Verificar si el email existe
-        const usuario = await Usuario.findOne({ correo });
-        if ( !usuario ) {
+        if (!usuario || !usuario.estado) {
             return res.status(400).json({
-                msg: 'Usuario / Password no son correctos - correo'
+                msg: 'Usuario / Password no son correctos'
             });
         }
 
-        // SI el usuario está activo
-        if ( !usuario.estado ) {
+        const validPassword = bcryptjs.compareSync(password, usuario.password);
+        if (!validPassword) {
             return res.status(400).json({
-                msg: 'Usuario / Password no son correctos - estado: false'
-            });
-        }
-
-        // Verificar la contraseña
-        const validPassword = bcryptjs.compareSync( password, usuario.password );
-        if ( !validPassword ) {
-            return res.status(400).json({
-                msg: 'Usuario / Password no son correctos - password'
+                msg: 'Usuario / Password no son correctos'
             });
         }
 
         // Generar el JWT
-        const token = await generarJWT( usuario.id );
+        const token = await generarJWT(usuario.id);
 
         res.json({
             usuario,
             token,
-            ok:true
-        })
-
+            ok: true
+        });
     } catch (error) {
-        console.log(error)
+        console.log(error);
         res.status(500).json({
             msg: 'Hable con el administrador'
         });
-    }   
-
-}
+    }
+};

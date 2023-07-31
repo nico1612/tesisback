@@ -1,19 +1,38 @@
+
+// Optimizar las importaciones utilizando destructuring
+import { Medico } from "../models/medico.js";
 import { Role } from "../models/role.js";
 import { Usuario } from "../models/usuario.js";
 
-export const esRoleValido = async(rol = '') => {
-
+// Función genérica para verificar si un documento existe por su ID
+async function existeDocumentoPorId(model, id, mensajeError) {
+    const existeDocumento = await model.findById(id);
+    if (!existeDocumento) {
+        throw new Error(`El id no existe ${id}`);
+    }
+}
+// Verificar si el rol es válido
+export async function esRoleValido(rol = '') {
     const existeRol = await Role.findOne({ rol });
-    if ( !existeRol ) {
-        throw new Error(`El rol ${ rol } no está registrado en la BD`);
+    if (!existeRol) {
+        throw new Error(`El rol ${rol} no está registrado en la BD`);
     }
 }
 
-export const emailExiste = async( correo = '' ) => {
+// Verificar si el usuario existe por su ID
+export async function existeUsuarioPorId(id = '') {
+    await existeDocumentoPorId(Usuario, id, `El id no existe ${id}`);
+}
 
-    // Verificar si el correo existe
+// Verificar si el médico existe por su ID
+export async function existeMedicoPorId(id = '') {
+    await existeDocumentoPorId(Medico, id, `El id no existe ${id}`);
+}
+
+// Verificar si el correo ya está registrado
+export async function emailExiste(correo = '') {
     const existeEmail = await Usuario.findOne({ correo });
-    if ( existeEmail ) {
-        throw new Error(`El correo: ${ correo }, ya está registrado`);
+    if (existeEmail) {
+        throw new Error(`El correo: ${correo}, ya está registrado`);
     }
 }

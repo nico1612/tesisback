@@ -1,11 +1,13 @@
 import express from 'express'
 import cors from 'cors'
 
-import {router} from '../routes/user.js';
+import {router} from '../routes/usuarios.js';
 import { dbConnection } from '../database/config.js';
 import { routerAuth} from '../routes/auth.js'
-import fileUpload from 'express-fileupload';
+import { routerMedico } from '../routes/medico.js';
 import { routerBuscar } from '../routes/buscar.js';
+import { routerSolicitud } from '../routes/solicitud.js';
+//import fileUpload from 'express-fileupload';
 
 export class Server{
 
@@ -15,10 +17,11 @@ export class Server{
         this.path={
             auth:      '/api/auth',
             buscar:    '/api/buscar',
-            categorias:'/api/categorias',
-            productos: '/api/productos',
+            medico:    '/api/medico',
+            solicitud: '/api/solicitud',
+            //productos: '/api/productos',
             usuarios:  '/api/usuarios',
-            uploads:   '/api/uploads'
+            //uploads:   '/api/uploads'
         }
 
         //middlewares
@@ -50,19 +53,20 @@ export class Server{
         this.app.use( express.static('public') );
 
         // Fileupload - Carga de archivos
-        this.app.use( fileUpload({
+        /*this.app.use( fileUpload({
             useTempFiles : true,
             tempFileDir : '/tmp/',
             createParentPath: true
-        }));
+        }));*/
 
     }
 
     routes(){
         this.app.use( this.path.auth,routerAuth);
         this.app.use( this.path.buscar,routerBuscar);
-        //this.app.use( this.path.categorias,routerCategoria);
+        this.app.use( this.path.solicitud,routerSolicitud);
         //this.app.use( this.path.productos,routerProducto);
+        this.app.use(this.path.medico,routerMedico)
         this.app.use(this.path.usuarios, router);
         //this.app.use(this.path.uploads, routerUploads)
 ;
