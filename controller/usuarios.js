@@ -27,3 +27,17 @@ export const usuariosPost = async(req, res = response) => {
     });
 
 }
+
+export const UsuarioPut = async (req, res = response) => {
+    const { usuarios } = req.body;
+    const { uid, password, correo, ...resto }=usuarios
+    
+    if (password) {
+        const salt = bcryptjs.genSaltSync();
+        resto.password = bcryptjs.hashSync(password, salt);
+    }
+
+    const usuario = await Usuario.findByIdAndUpdate(uid, resto);
+
+    res.json({  usuario });
+};
