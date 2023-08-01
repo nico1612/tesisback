@@ -16,16 +16,16 @@ export const medicosGet = async (req, res = response) => {
 };
 
 export const medicosPut = async (req, res = response) => {
-    const { id } = req.params;
-    const { _id, password, correo, ...resto } = req.body;
-
+    const {medico } = req.body;
+   const { uid, password, correo, ...resto }=medico
     if (password) {
         const salt = bcryptjs.genSaltSync();
         resto.password = bcryptjs.hashSync(password, salt);
     }
 
-    const medico = await Medico.findByIdAndUpdate(id, resto);
-    res.json({ medico });
+    const medicos = await Medico.findByIdAndUpdate(uid, resto);
+
+    res.json({ medicos });
 };
 
 export const medicoPost = async (req, res = response) => {

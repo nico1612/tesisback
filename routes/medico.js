@@ -9,13 +9,10 @@ export const routerMedico=Router()
 routerMedico.get('/',medicosGet)
 
 routerMedico.put('/:id',[
-    check('id', 'No es un ID válido').isMongoId(),
-    check('id').custom( existeMedicoPorId ),
-    check('rol').custom( esRoleValido ), 
     validarCampos
 ], medicosPut)
 
-routerMedico.post('/',[
+routerMedico.post('/:id',[
     check('nombre', 'El nombre es obligatorio').not().isEmpty(),
     check('apellido', 'El apellido es obligatorio').not().isEmpty(),
     check('password', 'El password debe de ser más de 6 letras').isLength({ min: 6 }),
