@@ -12,7 +12,7 @@ routerMedico.put('/:id',[
     validarCampos
 ], medicosPut)
 
-routerMedico.post('/:id',[
+routerMedico.post('/',[
     check('nombre', 'El nombre es obligatorio').not().isEmpty(),
     check('apellido', 'El apellido es obligatorio').not().isEmpty(),
     check('password', 'El password debe de ser más de 6 letras').isLength({ min: 6 }),

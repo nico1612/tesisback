@@ -1,7 +1,7 @@
 import { request, response } from "express";
 import bcryptjs from 'bcryptjs';
-import { Relacion } from "../models/relacion.js";
 
+import { Relacion } from "../models/relacion.js";
 import { Usuario } from "../models/usuario.js";
 
 export const usuariosGet = async(req = request, res = response) => {

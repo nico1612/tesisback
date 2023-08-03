@@ -8,7 +8,8 @@ import { routerMedico } from '../routes/medico.js';
 import { routerBuscar } from '../routes/buscar.js';
 import { routerSolicitud } from '../routes/solicitud.js';
 import { routerRelacion } from '../routes/relecion.js';
-//import fileUpload from 'express-fileupload';
+import fileUpload from 'express-fileupload';
+import { routerUploads } from '../routes/uploads.js';
 
 export class Server{
 
@@ -23,7 +24,7 @@ export class Server{
             solicitud: '/api/solicitud',
             //productos: '/api/productos',
             usuarios:  '/api/usuarios',
-            //uploads:   '/api/uploads'
+            uploads:   '/api/uploads'
         }
 
         //middlewares
@@ -55,11 +56,11 @@ export class Server{
         this.app.use( express.static('public') );
 
         // Fileupload - Carga de archivos
-        /*this.app.use( fileUpload({
+        this.app.use( fileUpload({
             useTempFiles : true,
-            tempFileDir : '/tmp/',
+            tempFileDir : './uploads',
             createParentPath: true
-        }));*/
+        }));
 
     }
 
@@ -67,11 +68,10 @@ export class Server{
         this.app.use( this.path.auth,routerAuth);
         this.app.use( this.path.buscar,routerBuscar);
         this.app.use( this.path.solicitud,routerSolicitud);
-        //this.app.use( this.path.productos,routerProducto);
-        this.app.use(this.path.medico,routerMedico)
-        this.app.use(this.path.usuarios, router);
-        this.app.use(this.path.relacion,routerRelacion)
-        //this.app.use(this.path.uploads, routerUploads)
+        this.app.use( this.path.medico,routerMedico)
+        this.app.use( this.path.usuarios, router);
+        this.app.use( this.path.relacion,routerRelacion)
+        this.app.use( this.path.uploads, routerUploads)
 ;
     }
 
