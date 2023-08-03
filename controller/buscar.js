@@ -59,38 +59,39 @@ const buscarMedicos=async(termino='',res=response)=>{
 const buscarSolicitud=async(termino='',res=response)=>{
 
     const esMongoId=ObjectId.isValid(termino)
-
-    if(esMongoId){
-        const solicitud = await Solicitud.findById(termino);
-        return res.json({
-            results: ( solicitud ) ? [ solicitud ] : []
-        });
-    }
-
+    let medicos=[]
+    let usuarios=[]
+   
     const regex = new RegExp( termino, 'i' );
-    const solicitud = await Solicitud.find({
+    const solicitudes = await Solicitud.find({
         $or: [ { receptor: regex }],
         $and: [{ estado: true }]
     })
 
-    const regex2= new RegExp( solicitud.emisor, 'i' );
-    const medico = await medico.find({
-        $or: [{ nombre: regex2 }, { uid: regex2 }],
-        $and: [{ estado: true }]
-    })
-    if(medico.lenght===0){
-        const usuario = await Usuario.find({
-            $or: [{ nombre: regex2 }, { correo: regex2 }],
-            $and: [{ estado: true }]
+    const promiseArray = solicitudes.map(async (solicitud) => {
+        const medico = await Medico.findById(solicitud.emisor);
+        if (medico) {
+            medicos.push(medico);
+        }
+    });
+    
+    // Esperar a que todas las promesas se resuelvan antes de continuar
+    await Promise.all(promiseArray);
+    
+    return res.json({
+        results: medicos
+    });
+    /*if(medicos){
+        solicitudes.map(async(solicitud)=>{
+            const usuario = await Usuario.findById(solicitud.emisor)
+            usuarios.push(usuario)
         })
         return res.json({
-            results: usuario
+            results: usuarios
         });
     }
   
-    return res.json({
-        results: medico
-    });
+   */
 }
 
 export const buscar=(req, res=response)=>{

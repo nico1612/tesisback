@@ -7,6 +7,7 @@ import { routerAuth} from '../routes/auth.js'
 import { routerMedico } from '../routes/medico.js';
 import { routerBuscar } from '../routes/buscar.js';
 import { routerSolicitud } from '../routes/solicitud.js';
+import { routerRelacion } from '../routes/relecion.js';
 //import fileUpload from 'express-fileupload';
 
 export class Server{
@@ -18,6 +19,7 @@ export class Server{
             auth:      '/api/auth',
             buscar:    '/api/buscar',
             medico:    '/api/medico',
+            relacion:  '/api/relacion',
             solicitud: '/api/solicitud',
             //productos: '/api/productos',
             usuarios:  '/api/usuarios',
@@ -68,6 +70,7 @@ export class Server{
         //this.app.use( this.path.productos,routerProducto);
         this.app.use(this.path.medico,routerMedico)
         this.app.use(this.path.usuarios, router);
+        this.app.use(this.path.relacion,routerRelacion)
         //this.app.use(this.path.uploads, routerUploads)
 ;
     }
