@@ -1,33 +1,32 @@
-import { v4 as uuidv4 } from 'uuid';
 import path from 'path';
+import { v4 as uuidv4 } from 'uuid';
+uuidv4()
+import { fileURLToPath } from 'url';
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+ 
+export const subirArchivo = ( file, extencionesValidas = ['png','jpg','jpeg','gif'], carpeta = '' ) => {
 
-export const subirArchivo = ( files, extensionesValidas = ['png','jpg','jpeg','gif'], carpeta = '' ) => {
-
-    return new Promise( (resolve, reject) => {
-
-        const { archivo } = files;
-        const nombreCortado = archivo.name.split('.');
-        const extension = nombreCortado[ nombreCortado.length - 1 ];
-
-        // Validar la extension
-        if ( !extensionesValidas.includes( extension ) ) {
-            return reject(`La extensión ${ extension } no es permitida - ${ extensionesValidas }`);
+    return new Promise((resolve,reject)=>{
+        const {files} = file;
+        const nombreCortado = files.name.split(".")
+        const extencion =nombreCortado[nombreCortado.length-1]
+    
+    
+        if(!extencionesValidas.includes(extencion)){
+            return reject("extencion no valida")
         }
-        
-        const nombreTemp = uuidv4() + '.' + extension;
-        
-
-        const uploadPath = path.join( __dirname, '../uploads/', carpeta, nombreTemp );
-
-        archivo.mv(uploadPath, (err) => {
+        const nombreTemp=uuidv4()+"."+extencion
+        const uploadPath = path.join( __dirname, '../uploads/', carpeta ,nombreTemp)
+     
+        files.mv(uploadPath, (err)=> {
+            
             if (err) {
-                reject(err);
-            }
-
-            resolve( nombreTemp );
+                reject(err)
+        }
+            resolve({uploadPath, nombreTemp})
         });
-        return(ms="ok")
+    })
+    
 
-    });
 
 }

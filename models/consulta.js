@@ -13,9 +13,15 @@ const ConsultaSchema = Schema({
     img: {
         type: String,
     },
-    date:{
-        type:Date,
+    dia:{
+        type:String,
+    },
+    mes:{
+        type:String,
+    },
+    ano:{
+        type:String,
     }
 });
 
-export const Medico= model("medico",ConsultaSchema)
+export const Consulta= model("consulta",ConsultaSchema)

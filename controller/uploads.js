@@ -1,101 +1,54 @@
 import { response } from "express";
-import path from 'path';
-import fs from 'fs'
-import cloudinary from 'cloudinary'
-import { subirArchivo } from "../helpers/subirArchivos.js";
-import { Usuario } from "../models/usuario.js";
+import { v2 } from "cloudinary";
+import { Consulta } from "../models/consulta.js";
 
-cloudinary.v2.config({
+const cloudinary = v2;
+const callCloudinary=()=>{
+  cloudinary.config({
     cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-    api_key: process.env.CLOUDINARY_API_KEY,
-    api_secret: process.env.CLOUDINARY_API_SECRET,
-});
-
-export const cargarArchivo = async(req, res = response) => {
-
-    try {
-        
-        // txt, md
-        // const nombre = await subirArchivo( req.files, ['txt','md'], 'textos' );
-        const nombre = await subirArchivo( req.files, undefined, 'imgs' );
-        res.json({ nombre });
-
-    } catch (msg) {
-        res.status(400).json({ msg });
-    }
-
+    api_key:process.env.CLOUDINARY_API_KEY,
+    api_secret:process.env.CLOUDINARY_API_SECRET
+  })
+  return cloudinary
 }
+ 
 
+export const actualizarImagenCloudinary = async (req, res = response) => {
+  const { id } = req.body;
+  const usuario = id;
+  const fechaActual = new Date();
+  const dia = fechaActual.getDate();
+  const mes = fechaActual.getMonth() + 1; // Los meses en JavaScript van de 0 a 11, por lo que sumamos 1 para obtener el número de mes correcto.
+  const ano = fechaActual.getFullYear();
+  const resultado = "ninguno de los tres";
 
-export const actualizarImagenCloudinary=async(req,res=response)=>{
-
-  const {id}=req.params
-
-  let modelo=await Usuario.findById(id)
-  if(!modelo){
-    return res.status(400).json({
-        msg:`No existe un usuario con el id ${id}`
-    })
-   }
-
-  if(!modelo.img){
-    /*const nombreArr = modelo.img.split('/');
-    const nombre    = nombreArr[ nombreArr.length - 1 ];
-    const [ public_id ] = nombre.split('.');
-    cloudinary.v2.uploader.destroy( public_id );*/
+  if (!req.files || Object.keys(req.files).length === 0 || !req.files.files) {
+    res.status(400).json({ msg: "No files were uploaded." });
+    return;
   }
 
-  const cloud_name= process.env.CLOUDINARY_CLOUD_NAME
-  const API_KEY =process.env.CLOUDINARY_API_KEY
-  const API_SECRET= process.env.CLOUDINARY_API_SECRET
-    console.log({cloud_name, API_KEY, API_SECRET})
-  const {tempFilePath} = req.files.archivo
-  //console.log(tempFilePath)
-  const resp = await cloudinary.v2.uploader.upload( tempFilePath );
-  /*modelo.img = secure_url;*/
+  const { tempFilePath } = req.files.files;
 
-  //await modelo.save();
+  try {
 
-  res.json( resp );
+    const { secure_url } = await callCloudinary().uploader.upload(tempFilePath, {
+      folder: `consultas/${id}`,
+    });
 
-}
+    const img = secure_url;
+    const consulta = new Consulta({
+      usuario,
+      resultado,
+      dia,
+      mes,
+      ano,
+      img,
+    });
+    await consulta.save();
 
-export const mostrarImagen=async(req,res=response)=>{
-  const {id,coleccion}=req.params
-
-  let modelo
-
-  switch(coleccion){
-    case 'usuario':
-      modelo=await Usuario.findById(id)
-      if(!modelo){
-        return res.status(400).json({
-          msg:`No existe un usuario con el id ${id}`
-        })
-      }
-    break;
-
-    case 'productos':
-      modelo=await Producto.findById(id)
-      if(!modelo){
-        return res.status(400).json({
-          msg:`No existe un producto con el id ${id}`
-        })
-      }
-
-    break;
-
-    default:
-      return res.status(500).json({ msg: 'Se me olvidó validar esto'});
+    res.json(consulta);
+  } catch (error) {
+    console.error("Error al subir la imagen:", error);
+    res.status(500).json({ mensaje: "Error del servidor" });
   }
-
-  if(!modelo.img){
-    const pathImagen=path.join(__dirname,'../uploads',coleccion,modelo.img)
-    if(fs.existsSync(pathImagen)){
-      return res.sendFile(pathImagen)
-    }
-  }
-
-  const pathImagen = path.join( __dirname, '../assets/no-image.jpg');
-  res.sendFile( pathImagen );
-}
+};

@@ -3,12 +3,14 @@ import mongoose from "mongoose";
 import { Usuario } from "../models/usuario.js";
 import { Medico } from "../models/medico.js";
 import { Solicitud } from "../models/solicitud.js";
+import { Consulta } from "../models/consulta.js";
 const ObjectId = mongoose.Types.ObjectId
 
 const coleccionesPermitidas=[
     'usuarios',
     'medicos',
     'solicitud',
+    'consultas'
 ]
 
 const buscarUsuarios=async(termino='',res=response)=>{
@@ -71,27 +73,43 @@ const buscarSolicitud=async(termino='',res=response)=>{
     const promiseArray = solicitudes.map(async (solicitud) => {
         const medico = await Medico.findById(solicitud.emisor);
         if (medico) {
-            medicos.push(medico);
+             medicos.push(medico);
         }
     });
-    
+        
     // Esperar a que todas las promesas se resuelvan antes de continuar
     await Promise.all(promiseArray);
-    
-    return res.json({
-        results: medicos
-    });
-    /*if(medicos){
-        solicitudes.map(async(solicitud)=>{
-            const usuario = await Usuario.findById(solicitud.emisor)
-            usuarios.push(usuario)
-        })
+    if(promiseArray){
         return res.json({
-            results: usuarios
+            results: medicos
         });
     }
-  
-   */
+    else{
+        const promiseArray = solicitudes.map(async (solicitud) => {
+            const usuario = await Usuario.findById(solicitud.emisor);
+            if (usuario) {
+                usuarios.push(usuario);
+            }
+        });
+        await Promise.all(promiseArray);
+   
+        return res.json({
+            results: medicos
+        });
+    }
+
+}
+
+const buscarConsulta = async(termino='',res=response)=>{
+
+    const regex = new RegExp( termino, 'i' );
+    const consultas = await Consulta.find({
+        $or: [ { usuario: regex }],
+    })
+
+    return res.json({
+        results: consultas
+    });
 }
 
 export const buscar=(req, res=response)=>{
@@ -113,6 +131,9 @@ export const buscar=(req, res=response)=>{
             break
         case 'solicitud':
             buscarSolicitud(termino,res)
+            break
+        case 'consultas':
+            buscarConsulta(termino,res)
             break
         default:
             res.status(500).json({

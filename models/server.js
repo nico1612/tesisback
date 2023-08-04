@@ -1,5 +1,6 @@
 import express from 'express'
 import cors from 'cors'
+import fileUpload from 'express-fileupload'
 
 import {router} from '../routes/usuarios.js';
 import { dbConnection } from '../database/config.js';
@@ -8,7 +9,6 @@ import { routerMedico } from '../routes/medico.js';
 import { routerBuscar } from '../routes/buscar.js';
 import { routerSolicitud } from '../routes/solicitud.js';
 import { routerRelacion } from '../routes/relecion.js';
-import fileUpload from 'express-fileupload';
 import { routerUploads } from '../routes/uploads.js';
 
 export class Server{
@@ -58,10 +58,9 @@ export class Server{
         // Fileupload - Carga de archivos
         this.app.use( fileUpload({
             useTempFiles : true,
-            tempFileDir : './uploads',
+            tempFileDir : '/tmp/',
             createParentPath: true
         }));
-
     }
 
     routes(){
