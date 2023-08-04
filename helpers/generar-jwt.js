@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken'
 
-import {Usuario} from '../models/usuario.js';
+import { Paciente} from '../models/paciente.js';
 
 export const generarJWT = ( uid = '' ) => {
 
@@ -33,7 +33,7 @@ export const comprobarJWT=async(token='')=>{
 
         const {uid}=jwt.verify(token,process.env.SECRETORPRIVATEKEY)
 
-        const usuario = await Usuario.findById(uid)
+        const usuario = await Paciente.findById(uid)
 
         if(usuario){
             if(usuario.estado){

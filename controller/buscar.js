@@ -1,6 +1,6 @@
 import { response } from "express";
 import mongoose from "mongoose";
-import { Usuario } from "../models/usuario.js";
+import { Paciente } from "../models/paciente.js";
 import { Medico } from "../models/medico.js";
 import { Solicitud } from "../models/solicitud.js";
 import { Consulta } from "../models/consulta.js";
@@ -18,14 +18,14 @@ const buscarUsuarios=async(termino='',res=response)=>{
     const esMongoId=ObjectId.isValid(termino)
 
     if(esMongoId){
-        const usuario = await Usuario.findById(termino);
+        const usuario = await Paciente.findById(termino);
         return res.json({
             results: ( usuario ) ? [ usuario ] : []
         });
     }
 
     const regex = new RegExp( termino, 'i' );
-    const usuario = await Usuario.find({
+    const usuario = await Paciente.find({
         $or: [{ nombre: regex }, { correo: regex }],
         $and: [{ estado: true }]
     })
@@ -86,7 +86,7 @@ const buscarSolicitud=async(termino='',res=response)=>{
     }
     else{
         const promiseArray = solicitudes.map(async (solicitud) => {
-            const usuario = await Usuario.findById(solicitud.emisor);
+            const usuario = await Paciente.findById(solicitud.emisor);
             if (usuario) {
                 usuarios.push(usuario);
             }

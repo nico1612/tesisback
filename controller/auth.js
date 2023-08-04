@@ -1,14 +1,14 @@
 import bcryptjs from 'bcryptjs';
 
 import { generarJWT } from "../helpers/generar-jwt.js";
-import { Usuario } from '../models/usuario.js';
+import { Paciente } from '../models/paciente.js';
 import { Medico } from '../models/medico.js';
 
 export const login = async (req, res = response) => {
     const { correo, password } = req.body;
 
     try {
-        const usuario = await Usuario.findOne({ correo }) || await Medico.findOne({ correo });
+        const usuario = await Paciente.findOne({ correo }) || await Medico.findOne({ correo });
 
         if (!usuario || !usuario.estado) {
             return res.status(400).json({

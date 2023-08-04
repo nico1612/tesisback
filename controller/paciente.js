@@ -2,11 +2,11 @@ import { request, response } from "express";
 import bcryptjs from 'bcryptjs';
 
 import { Relacion } from "../models/relacion.js";
-import { Usuario } from "../models/usuario.js";
+import { Paciente } from "../models/paciente.js";
 
 export const usuariosGet = async(req = request, res = response) => {
 
-    const usuario = await Usuario.find();
+    const usuario = await Paciente.find();
 
     res.json({
         usuario,
@@ -37,7 +37,7 @@ export const usuariosPacientesGet= async (req, res = response)=>{
 
     // Recorrer las relaciones únicas y agregar usuarios únicos al conjunto
     for (const relacion of relacionesUnicas) {
-        const usuario = await Usuario.findById(relacion.paciente);
+        const usuario = await Paciente.findById(relacion.paciente);
         usuariosSet.add(usuario);
     }
 
@@ -50,7 +50,7 @@ export const usuariosPacientesGet= async (req, res = response)=>{
 export const usuariosPost = async(req, res = response) => {
 
     const { nombre, apellido, correo, password, rol } = req.body;
-    const usuario = new Usuario({ nombre,apellido, correo, password, rol });
+    const usuario = new Paciente({ nombre,apellido, correo, password, rol });
 
     // Encriptar la contraseña
     const salt = bcryptjs.genSaltSync();
@@ -74,7 +74,7 @@ export const UsuarioPut = async (req, res = response) => {
         resto.password = bcryptjs.hashSync(password, salt);
     }
 
-    const usuario = await Usuario.findByIdAndUpdate(uid, resto);
+    const usuario = await Paciente.findByIdAndUpdate(uid, resto);
 
     res.json({  usuario });
 };

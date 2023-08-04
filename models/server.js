@@ -2,7 +2,7 @@ import express from 'express'
 import cors from 'cors'
 import fileUpload from 'express-fileupload'
 
-import {router} from '../routes/usuarios.js';
+import {router} from '../routes/paciente.js';
 import { dbConnection } from '../database/config.js';
 import { routerAuth} from '../routes/auth.js'
 import { routerMedico } from '../routes/medico.js';
@@ -22,8 +22,7 @@ export class Server{
             medico:    '/api/medico',
             relacion:  '/api/relacion',
             solicitud: '/api/solicitud',
-            //productos: '/api/productos',
-            usuarios:  '/api/usuarios',
+            paciente:  '/api/pacientes',
             uploads:   '/api/uploads'
         }
 
@@ -68,7 +67,7 @@ export class Server{
         this.app.use( this.path.buscar,routerBuscar);
         this.app.use( this.path.solicitud,routerSolicitud);
         this.app.use( this.path.medico,routerMedico)
-        this.app.use( this.path.usuarios, router);
+        this.app.use( this.path.paciente, router);
         this.app.use( this.path.relacion,routerRelacion)
         this.app.use( this.path.uploads, routerUploads)
 ;

@@ -2,7 +2,7 @@
 // Optimizar las importaciones utilizando destructuring
 import { Medico } from "../models/medico.js";
 import { Role } from "../models/role.js";
-import { Usuario } from "../models/usuario.js";
+import { Paciente } from "../models/paciente.js";
 
 // Función genérica para verificar si un documento existe por su ID
 async function existeDocumentoPorId(model, id, mensajeError) {
@@ -21,7 +21,7 @@ export async function esRoleValido(rol = '') {
 
 // Verificar si el usuario existe por su ID
 export async function existeUsuarioPorId(id = '') {
-    await existeDocumentoPorId(Usuario, id, `El id no existe ${id}`);
+    await existeDocumentoPorId(Paciente, id, `El id no existe ${id}`);
 }
 
 // Verificar si el médico existe por su ID
@@ -31,7 +31,7 @@ export async function existeMedicoPorId(id = '') {
 
 // Verificar si el correo ya está registrado
 export async function emailExiste(correo = '') {
-    const existeEmail = await Usuario.findOne({ correo });
+    const existeEmail = await Paciente.findOne({ correo });
     if (existeEmail) {
         throw new Error(`El correo: ${correo}, ya está registrado`);
     }

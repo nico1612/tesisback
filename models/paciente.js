@@ -1,7 +1,7 @@
 import pkg from 'mongoose';
 const {Schema, model} = pkg;
 
-const UsuarioSchema = Schema({
+const PacienteSchema = Schema({
     nombre: {
         type: String,
         required: [true, 'El nombre es obligatorio']
@@ -34,10 +34,10 @@ const UsuarioSchema = Schema({
     },
 });
 
-UsuarioSchema.methods.toJSON = function() {
-    const { __v, password, _id, ...usuario  } = this.toObject();
-    usuario.uid = _id;
-    return usuario;
+PacienteSchema.methods.toJSON = function() {
+    const { __v, password, _id, ...paciente  } = this.toObject();
+    paciente.uid = _id;
+    return paciente;
 }
 
-export const Usuario= model("usuario",UsuarioSchema)
+export const Paciente= model("paciente",PacienteSchema)
