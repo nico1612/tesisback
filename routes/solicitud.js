@@ -7,7 +7,5 @@ import { solicitudPost } from "../controller/solicitud.js";
 export const routerSolicitud=Router()
 
 routerSolicitud.post('/',[
-    check('receptor', 'El receptor es obligatorio').not().isEmpty(),
-    check('emisor', 'El emisor es obligatorio').not().isEmpty(),
     validarCampos
 ], solicitudPost);

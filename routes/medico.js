@@ -1,12 +1,14 @@
 import { Router } from "express";
 import {check} from 'express-validator'
 
-import { medicoPost, medicosGet, medicosPut } from "../controller/medico.js";
+import { medicoPost, medicosGet, medicosIdGet, medicosPut } from "../controller/medico.js";
 import { validarCampos } from "../middlewares/validar-campos.js";
 import { emailExiste, esRoleValido, existeMedicoPorId } from "../helpers/db-validator.js";
 export const routerMedico=Router()
 
 routerMedico.get('/',medicosGet)
+
+routerMedico.get("/:id",medicosIdGet)
 
 routerMedico.put('/:id',[
     validarCampos

@@ -1,5 +1,6 @@
 import bcryptjs from 'bcryptjs';
 import { Medico } from "../models/medico.js";
+import { Relacion } from '../models/relacion.js';
 
 export const medicosGet = async (req, res = response) => {
     try {
@@ -38,4 +39,25 @@ export const medicoPost = async (req, res = response) => {
 
     await medico.save();
     res.json({ medico });
+};
+
+export const medicosIdGet = async (req, res = response) => {
+    try {
+        const { id } = req.params;
+        const medicos = [];
+        const regex = new RegExp(id, 'i');
+        const relaciones = await Relacion.find({ $or: [{ paciente: regex }] });
+
+        // Usamos Promise.all para esperar a que todas las promesas se resuelvan
+        await Promise.all(
+            relaciones.map(async (relacion) => {
+                const medico = await Medico.findById(relacion.medico);
+                medicos.push(medico);
+            })
+        );
+
+        res.json({ medico: medicos });
+    } catch (error) {
+        res.status(500).json({ error: 'Ha ocurrido un error en el servidor.' });
+    }
 };

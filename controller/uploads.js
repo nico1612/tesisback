@@ -11,7 +11,6 @@ const callCloudinary=()=>{
   })
   return cloudinary
 }
- 
 
 export const actualizarImagenCloudinary = async (req, res = response) => {
   const { id } = req.body;

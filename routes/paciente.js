@@ -3,7 +3,7 @@ import {check} from 'express-validator'
 
 import { validarCampos } from "../middlewares/validar-campos.js";
 import { emailExiste, esRoleValido } from "../helpers/db-validator.js";
-import { UsuarioPut, usuariosGet, usuariosPacientesGet, usuariosPost } from "../controller/paciente.js";
+import { UsuarioEstadisticasTotales, UsuarioPut, usuariosGet, usuariosPacientesGet, usuariosPost } from "../controller/paciente.js";
 
 export const router=Router()
 
@@ -24,3 +24,5 @@ router.post('/',[
     check('rol').custom( esRoleValido ), 
     validarCampos
 ], usuariosPost );
+
+router.get('/estadisticas/:id',UsuarioEstadisticasTotales)

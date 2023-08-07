@@ -17,12 +17,12 @@ export const relacionPost = async (req, res = response) => {
         if (estado) {
             medico = mandado ? emisor : receptor;
             paciente = mandado ? receptor : emisor;
-
+            const estado=true
             // Verificar si la relación ya existe
             const relacionExistente = await Relacion.findOne({ medico, paciente });
 
             if (!relacionExistente) {
-                const relacion = new Relacion({ medico, paciente });
+                const relacion = new Relacion({ medico, paciente,estado });
                 await relacion.save();
             }
         }

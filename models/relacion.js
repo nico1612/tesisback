@@ -10,6 +10,10 @@ const RelacionSchema = Schema({
         type:String,
         require:[true,'El apellido es obligatorio']
     },
+    estado:{
+        type:Boolean,
+        require:[true,'El apellido es obligatorio']
+    },
 });
 
 
