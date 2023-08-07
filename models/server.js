@@ -10,12 +10,17 @@ import { routerBuscar } from '../routes/buscar.js';
 import { routerSolicitud } from '../routes/solicitud.js';
 import { routerRelacion } from '../routes/relecion.js';
 import { routerUploads } from '../routes/uploads.js';
+import { createServer } from 'http';
+import { Server as SocketIOServer } from 'socket.io';
 
 export class Server{
 
     constructor(){
         this.app = express()
         this.port=process.env.PORT
+        this.server = createServer( this.app );
+        this.io = new SocketIOServer(this.server);
+
         this.path={
             auth:      '/api/auth',
             buscar:    '/api/buscar',
@@ -74,7 +79,7 @@ export class Server{
     }
 
     listen(){
-        this.app.listen(this.port,()=>{
+        this.server.listen(this.port,()=>{
             console.log('Servidor corriendo en el puerto ' , this.port)
         })
     }
