@@ -4,13 +4,15 @@ import { Paciente } from "../models/paciente.js";
 import { Medico } from "../models/medico.js";
 import { Solicitud } from "../models/solicitud.js";
 import { Consulta } from "../models/consulta.js";
+import { Relacion } from "../models/relacion.js";
 const ObjectId = mongoose.Types.ObjectId
 
 const coleccionesPermitidas=[
     'usuarios',
     'medicos',
     'solicitud',
-    'consultas'
+    'consultas',
+    'relaciones'
 ]
 
 const buscarUsuarios=async(termino='',res=response)=>{
@@ -76,10 +78,12 @@ const buscarSolicitud=async(termino='',res=response)=>{
              medicos.push(medico);
         }
     });
-        
+
+
     // Esperar a que todas las promesas se resuelvan antes de continuar
     await Promise.all(promiseArray);
-    if(promiseArray){
+
+    if(medicos.length>0){
         return res.json({
             results: medicos
         });
@@ -92,9 +96,9 @@ const buscarSolicitud=async(termino='',res=response)=>{
             }
         });
         await Promise.all(promiseArray);
-   
+
         return res.json({
-            results: medicos
+            results: usuarios
         });
     }
 
@@ -112,10 +116,43 @@ const buscarConsulta = async(termino='',res=response)=>{
     });
 }
 
+const buscarRelaciones = async (termino = '', res = response) => {
+    const regex = new RegExp(termino, 'i');
+    let medicos = [];
+    let pacientes = [];
+    const consultas = await Relacion.find({
+      $or: [{ medico: regex }, { paciente: regex }],
+    });
+  
+    await Promise.all(
+      consultas.map(async (consulta) => {
+        if (consulta.medico === termino) {
+          const paciente = await Paciente.findById(consulta.paciente);
+          pacientes.push(paciente);
+          console.log(paciente);
+        } else {
+          const medico = await Medico.findById(consulta.medico);
+          medicos.push(medico);
+          console.log(medico);
+        }
+      })
+    );
+  
+    if (medicos.length > 0) {
+      return res.json({
+        results: medicos,
+      });
+    } else {
+      return res.json({
+        results: pacientes,
+      });
+    }
+  };
+  
 export const buscar=(req, res=response)=>{
 
     const {coleccion,termino}=req.params
-
+   
     if(!coleccionesPermitidas.includes(coleccion)){
         return res.status(400).json({
             msg:`Las colecciones permitidas son  ${coleccionesPermitidas}`
@@ -134,6 +171,9 @@ export const buscar=(req, res=response)=>{
             break
         case 'consultas':
             buscarConsulta(termino,res)
+            break
+        case 'relaciones':
+            buscarRelaciones(termino,res)
             break
         default:
             res.status(500).json({
