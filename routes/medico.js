@@ -1,7 +1,7 @@
 import { Router } from "express";
 import {check} from 'express-validator'
 
-import { medicoPost, medicosGet, medicosIdGet, medicosPut } from "../controller/medico.js";
+import { eliminarMedico, medicoPost, medicosGet, medicosIdGet, medicosPut } from "../controller/medico.js";
 import { validarCampos } from "../middlewares/validar-campos.js";
 import { emailExiste, esRoleValido, existeMedicoPorId } from "../helpers/db-validator.js";
 export const routerMedico=Router()
@@ -25,3 +25,5 @@ routerMedico.post('/',[
     check('rol').custom( esRoleValido ), 
     validarCampos
 ], medicoPost );
+
+routerMedico.delete('/:id',eliminarMedico)

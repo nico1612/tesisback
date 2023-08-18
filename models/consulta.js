@@ -6,8 +6,8 @@ const ConsultaSchema = Schema({
         type: String,
         required: [true, 'El usuario es obligatorio']
     },
-    resultado: {
-        type: String,
+    resultadoDA: {
+        type: Number,
         required: [true, 'El resultado es obligatoria'],
     },
     img: {
