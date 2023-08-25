@@ -2,7 +2,14 @@
     "version":2,
     "builds":[
         { 
-            "src":"./app.js"
+            "src":"./app.js",
+            "use":"@versel/node"
+        }
+    ],
+    "routes":[
+        {
+            "src":"/(.*)",
+            "dest":"/"
         }
     ]
 }
