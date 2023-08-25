@@ -1,8 +1,1 @@
-{
-    "version":2,
-    "builds":[
-        { 
-            "src":"./app.js"
-        }
-    ]
-}
+{ "rewrites": [{ "source": "/(.*)", "destination": "/" }] }
